@@ -1,0 +1,30 @@
+steps:
+- task: TerraformInstaller@1
+  inputs:
+    terraformVersion: 'latest'
+
+- task: TerraformTaskV4@4
+  displayName: 'Terraform Init - QA'
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+    backendType: 'azurerm'
+    backendServiceArm: 'Azure-Subscription-123'
+    backendAzureRmOverrideSubscriptionID: 'c12025cf-57b0-44cc-9aac-94008aa0819f'
+    backendAzureRmResourceGroupName: 'MyResourceGroup'
+    backendAzureRmStorageAccountName: 'test123storage'
+    backendAzureRmContainerName: 'test123container'
+    backendAzureRmKey: 'qa/terraform.tfstate' 
+  env:
+    TF_VAR_environment: 'qa' # Only this single variable is injected here
+
+- task: TerraformTaskV4@4
+  displayName: 'Terraform Plan - QA'
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+    environmentServiceNameAzureRM: 'Azure-Subscription-123'
+  env:
+    TF_VAR_environment: 'qa' # Kept in sync for the planning stage
