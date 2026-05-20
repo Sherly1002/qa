@@ -1,11 +1,11 @@
-name: Deploy Azure VM with Terraform
+name: Terraform CI/CD Pipeline
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  terraform-azure-vm:
+  terraform-pipeline:
     runs-on: windows-latest
     
     env:
@@ -18,13 +18,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Fixes the "Please run az login" backend error
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.7.0"
 
+      # Disables CLI auth checking to enforce Service Principal variables
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -backend-config="use_azure_cli=false"
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
