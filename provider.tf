@@ -12,21 +12,17 @@ terraform {
   
   # ⬇️ ADD THIS EMPTY BLOCK TO RESOLVE THE WARNING ⬇️
   backend "azurerm" {
-    # Keep this completely blank! 
-    # Your Azure DevOps pipeline injects the storage account details here dynamically.
-  }
-
-  
-}
-
-provider "azurerm" {
-  features {}
-}
-terraform {
-  backend "azurerm" {
     resource_group_name  = "MyResourceGroup"
     storage_account_name = "test123storage"
     container_name       = "test123container" 
     key                  = "terraform.tfstate"
   }
+
+  
+}
+
+
+
+provider "azurerm" {
+  features {}
 }
