@@ -22,3 +22,11 @@ terraform {
 provider "azurerm" {
   features {}
 }
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "your-backend-resource-group"
+    storage_account_name = "yourstorageaccountname"
+    container_name       = "your-blob-container-name" # <-- This was missing
+    key                  = "terraform.tfstate"
+  }
+}
